@@ -48,7 +48,7 @@ fun AccountTypeScreen(navController: NavController) {
             color = Color.Black
         )
         Text(
-            text = "Your smart food companion",
+            text = "Your smart food and companion",
             fontSize = 16.sp,
             color = Color.Gray
         )
