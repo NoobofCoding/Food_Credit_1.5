@@ -62,7 +62,7 @@ fun UserLoginScreen(navController: NavController) {
             color = Color.Black
         )
         Text(
-            text = "Your smart food companion",
+            text = "Recycle, Redeem, Relish",
             fontSize = 16.sp,
             color = Color.Gray
         )

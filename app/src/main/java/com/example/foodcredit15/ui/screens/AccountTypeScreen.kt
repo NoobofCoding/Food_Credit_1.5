@@ -35,9 +35,7 @@ fun AccountTypeScreen(navController: NavController) {
         Image(
             painter = painterResource(R.drawable.logo),
             contentDescription = "App Logo",
-            modifier = Modifier
-                .size(60.dp)
-                .clip(CircleShape)
+            modifier = Modifier.size(60.dp).clip(CircleShape)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -48,7 +46,7 @@ fun AccountTypeScreen(navController: NavController) {
             color = Color.Black
         )
         Text(
-            text = "Your smart food companion",
+            text ="Recycle,Redeem,Relish",
             fontSize = 16.sp,
             color = Color.Gray
         )

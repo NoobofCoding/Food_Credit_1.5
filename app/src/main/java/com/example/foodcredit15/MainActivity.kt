@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.foodcredit15.ui.screens.AccountTypeScreen
 import com.example.foodcredit15.ui.screens.UserLoginScreen
 import com.example.foodcredit15.ui.screens.EmployeeLoginScreen
+import com.example.foodcredit15.ui.screens.SplashScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,8 +22,14 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "accountType"
-                    ) {
+                        startDestination = "splash"
+                    )
+                    {
+                        {
+                    }
+                        composable("splash") {
+                            SplashScreen(navController)
+                        }
                         composable("accountType") {
                             AccountTypeScreen(navController)
                         }
