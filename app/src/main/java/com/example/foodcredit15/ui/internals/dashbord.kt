@@ -28,7 +28,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun DashboardScreen(
     navController: NavController,
-    userName: String = "Samson", userInitials: String = "SAM") {
+    userName: String = "Samson", userInitials: String = "SAM"
+) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -38,7 +39,10 @@ fun DashboardScreen(
             DrawerContent(
                 userName = userName,
                 userInitials = userInitials,
-                onItemClick = { },
+                onItemClick = { route ->
+                    scope.launch { drawerState.close() } // close drawer first
+                    navController.navigate(route)       // then navigate
+                },
                 onLogout = { navController.navigate("userLogin") }
             )
         }
@@ -203,11 +207,11 @@ fun DrawerContent(
 
             Divider()
 
-            DrawerMenuItem("Home", Icons.Default.Home, true) { onItemClick("Home") }
-            DrawerMenuItem("Account", Icons.Default.Person, false) { onItemClick("Account") }
-            DrawerMenuItem("Order", Icons.Default.Restaurant, false) { onItemClick("Order") }
-            DrawerMenuItem("History", Icons.Default.History, false) { onItemClick("History") }
-            DrawerMenuItem("Settings", Icons.Default.Settings, false) { onItemClick("Settings") }
+            DrawerMenuItem("Home", Icons.Default.Home, true) { onItemClick("dashboard") }
+            DrawerMenuItem("Account", Icons.Default.Person, false) { onItemClick("accountscreen") }
+            DrawerMenuItem("Order", Icons.Default.Restaurant, false) { onItemClick("orderscreen") }
+            DrawerMenuItem("History", Icons.Default.History, false) { onItemClick("history") }
+            DrawerMenuItem("Settings", Icons.Default.Settings, false) { onItemClick("settings") }
 
             Spacer(modifier = Modifier.weight(1f))
 
@@ -223,11 +227,8 @@ fun DrawerContent(
                 Icon(Icons.Default.ExitToApp,
                     contentDescription = null,
                     tint = Color.Red)
-                Spacer(Modifier
-                    .width(6.dp)
-                    .clickable( onClick = onLogout ))
+                Spacer(Modifier.width(6.dp))
                 Text("Logout", color = Color.Red)
-
             }
         }
     }
@@ -262,9 +263,5 @@ fun DrawerMenuItem(
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DashboardPreview() {
-    DashboardScreen(
-        navController = TODO(),
-        userName = TODO(),
-        userInitials = TODO()
-    )
+    // Preview can’t use real navController, so left blank
 }
