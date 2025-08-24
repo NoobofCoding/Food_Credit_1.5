@@ -13,6 +13,9 @@ import com.example.foodcredit15.ui.screens.UserLoginScreen
 import com.example.foodcredit15.ui.screens.EmployeeLoginScreen
 import com.example.foodcredit15.ui.screens.SplashScreen
 import com.example.foodcredit15.ui.internals.DashboardScreen
+import com.example.foodcredit15.ui.internals.AccountScreen
+import com.example.foodcredit15.ui.internals.OrderScreen
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,9 +28,6 @@ class MainActivity : ComponentActivity() {
                         startDestination = "splash"
                     )
                     {
-                        {
-                    }
-
                         composable("splash") {
                             SplashScreen(navController)
                         }
@@ -42,6 +42,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("dashboard") {
                             DashboardScreen(navController)
+                        }
+                        composable("accountscreen") {
+                            AccountScreen(navController)
+                        }
+                        composable("orderscreen") {
+                            OrderScreen(navController)
                         }
                     }
                 }
