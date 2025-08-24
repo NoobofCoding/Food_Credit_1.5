@@ -134,8 +134,10 @@ fun UserLoginScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = { /* TODO: Handle login logic */ },
-                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { navController.navigate("dashboard")},
+                    modifier = Modifier
+                        .clickable { navController.navigate("dashboard") }
+                        .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1EB980)),
                     shape = RoundedCornerShape(12.dp)
                 ) {
