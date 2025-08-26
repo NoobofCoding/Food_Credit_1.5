@@ -1,4 +1,4 @@
-package com.example.foodcredit15.ui.internals
+    package com.example.foodcredit15.ui.internals
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
