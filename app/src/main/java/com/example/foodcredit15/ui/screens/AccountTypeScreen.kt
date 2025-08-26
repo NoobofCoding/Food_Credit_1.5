@@ -171,12 +171,15 @@ fun AccountTypeScreen(navController: NavController) {
         }
 
         Spacer(modifier = Modifier.height(32.dp))
+
         Text(
             text = "Already have an account? Sign in here",
             fontSize = 14.sp,
             color = Color(0xFF1EB980),
             textAlign = TextAlign.Center,
-            modifier = Modifier.clickable { navController.navigate("userLogin") }
+            modifier = Modifier
+                .clickable{navController.navigate("userLogin")}
+
         )
     }
 }
