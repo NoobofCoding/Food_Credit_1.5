@@ -18,6 +18,7 @@ import com.example.foodcredit15.ui.internals.Order
 import com.example.foodcredit15.ui.internals.OrderHistoryScreen
 import com.example.foodcredit15.ui.internals.OrderScreen
 import com.example.foodcredit15.ui.screens.RegistrationScreen
+import com.example.foodcredit15.ui.internals.SettingsScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -75,6 +76,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable ("registration"){
                             RegistrationScreen(navController)
+                        }
+                        composable("settings"){
+                            SettingsScreen(navController)
                         }
                     }
                 }

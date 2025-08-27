@@ -31,8 +31,7 @@ data class FoodItem(
 /* ------------------------- ORDER SCREEN ------------------------- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderScreen(
-    navController: NavController,
+fun OrderScreen(navController: NavController,
     userInitials: String = "SAM"
 ) {
     val foodItems = listOf(

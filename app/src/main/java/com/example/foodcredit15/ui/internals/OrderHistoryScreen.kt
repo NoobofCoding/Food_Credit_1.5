@@ -22,8 +22,7 @@ data class Order(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderHistoryScreen(
-    orders: List<Order>) {
+fun OrderHistoryScreen(orders: List<Order>) {
     Scaffold(
         topBar = {
             TopAppBar(

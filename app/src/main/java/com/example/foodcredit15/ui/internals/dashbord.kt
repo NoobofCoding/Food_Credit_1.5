@@ -1,6 +1,8 @@
-    package com.example.foodcredit15.ui.internals
+package com.example.foodcredit15.ui.internals
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -15,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,9 +29,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardScreen(
-    navController: NavController,
-    userName: String = "Samson", userInitials: String = "SAM"
+fun DashboardScreen(navController: NavController,
+                    userName: String = "Samson", userInitials: String = "SAM"
 ) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -83,8 +85,8 @@ fun DashboardContent(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .background(Color(0xFFF0F0F0)) // Light gray background to match the style
+            .padding(12.dp)
     ) {
         // Row of three cards
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -108,11 +110,73 @@ fun DashboardContent(modifier: Modifier = Modifier) {
             )
         }
 
-        // Recent Activity
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Nearby Vending Machines Button
+        Button(
+            onClick = { /* TODO: Navigate to vending machines map */ },
+            modifier = Modifier
+                .fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+            shape = RoundedCornerShape(12.dp),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "Location Icon",
+                    tint = Color.Black,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Nearby Vending Machines", color = Color.Black)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Recent Activity Section with Card
         Text("Recent Activity", fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
-        ActivityItem("Order Placed", "-INR 120.50", Color.Red, "Downtown Vending", "2h ago")
-        ActivityItem("Credit Added", "+INR 100.00", Color(0xFF2B7A30), "Monthly allowance", "3d ago")
-        ActivityItem("Order Completed", "-INR 34.75", Color.Red, "Fresh Market Vending", "1w ago")
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color(0xFFD3D3D3), RoundedCornerShape(16.dp))
+        ) {
+            Column(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)
+            ) {
+                ActivityItem(
+                    title = "Order Placed",
+                    amount = "-INR 120.50",
+                    amountColor = Color.Red,
+                    subtitle = "Downtown Vending",
+                    time = "2h ago"
+                )
+                Divider(color = Color(0xFFE0E0E0), thickness = 1.dp, modifier = Modifier.padding(vertical = 12.dp))
+
+                ActivityItem(
+                    title = "Credit Added",
+                    amount = "+INR 100.00",
+                    amountColor = Color(0xFF2B7A30),
+                    subtitle = "Monthly allowance",
+                    time = "3d ago"
+                )
+                Divider(color = Color(0xFFE0E0E0), thickness = 1.dp, modifier = Modifier.padding(vertical = 12.dp))
+
+                ActivityItem(
+                    title = "Order Completed",
+                    amount = "-INR 34.75",
+                    amountColor = Color.Red,
+                    subtitle = "Fresh Market Vending",
+                    time = "1w ago"
+                )
+            }
+        }
     }
 }
 
@@ -120,8 +184,10 @@ fun DashboardContent(modifier: Modifier = Modifier) {
 fun DashboardCard(title: String, value: String, valueColor: Color, icon: ImageVector) {
     Card(
         modifier = Modifier
-            .height(110.dp),
+            .height(110.dp)
+            .border(1.dp, Color(0xFFD3D3D3), RoundedCornerShape(12.dp)), // Added border
         shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White), // Set card color to white
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Column(
@@ -147,23 +213,19 @@ fun DashboardCard(title: String, value: String, valueColor: Color, icon: ImageVe
 
 @Composable
 fun ActivityItem(title: String, amount: String, amountColor: Color, subtitle: String, time: String) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 6.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(title, fontWeight = FontWeight.SemiBold)
-                Text(subtitle, fontSize = 12.sp, color = Color.Gray)
-            }
-            Column(horizontalAlignment = Alignment.End) {
-                Text(amount, fontWeight = FontWeight.SemiBold, color = amountColor)
-                Text(time, fontSize = 12.sp, color = Color.Gray)
-            }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(title, fontWeight = FontWeight.SemiBold)
+            Text(subtitle, fontSize = 12.sp, color = Color.Gray)
         }
-        Divider(modifier = Modifier.padding(top = 6.dp))
+        Column(horizontalAlignment = Alignment.End) {
+            Text(amount, fontWeight = FontWeight.SemiBold, color = amountColor)
+            Text(time, fontSize = 12.sp, color = Color.Gray)
+        }
     }
 }
 
