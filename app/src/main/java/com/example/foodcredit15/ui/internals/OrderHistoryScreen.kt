@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 // Data model for orders
 data class Order(
@@ -21,7 +22,8 @@ data class Order(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OrderHistoryScreen(orders: List<Order>) {
+fun OrderHistoryScreen(
+    orders: List<Order>) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -48,6 +50,7 @@ fun OrderHistoryScreen(orders: List<Order>) {
 @Composable
 fun OrderCard(order: Order) {
     Card(
+
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier.fillMaxWidth()

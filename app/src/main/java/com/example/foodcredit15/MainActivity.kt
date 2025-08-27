@@ -14,7 +14,11 @@ import com.example.foodcredit15.ui.screens.EmployeeLoginScreen
 import com.example.foodcredit15.ui.screens.SplashScreen
 import com.example.foodcredit15.ui.internals.DashboardScreen
 import com.example.foodcredit15.ui.internals.AccountScreen
+import com.example.foodcredit15.ui.internals.Order
+import com.example.foodcredit15.ui.internals.OrderHistoryScreen
 import com.example.foodcredit15.ui.internals.OrderScreen
+import com.example.foodcredit15.ui.screens.RegistrationScreen
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +52,29 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("orderscreen") {
                             OrderScreen(navController)
+                        }
+                        composable("history") {
+                            OrderHistoryScreen(
+                                listOf(
+                                    Order(
+                                        name = "Paneer Butter Masala",
+                                        date = "25 Aug 2025",
+                                        orderId = "#12345",
+                                        price = "₹250",
+                                        status = "Delivered"
+                                    ),
+                                    Order(
+                                        name = "Veg Burger",
+                                        date = "22 Aug 2025",
+                                        orderId = "#12346",
+                                        price = "₹120",
+                                        status = "Delivered"
+                                    )
+                                )
+                            )
+                        }
+                        composable ("registration"){
+                            RegistrationScreen(navController)
                         }
                     }
                 }

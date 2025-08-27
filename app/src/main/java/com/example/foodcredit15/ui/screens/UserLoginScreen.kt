@@ -150,7 +150,7 @@ fun UserLoginScreen(navController: NavController) {
                     text = "Don't have an account? Sign up",
                     fontSize = 14.sp,
                     color = Color(0xFF1EB980),
-                    modifier = Modifier.clickable { /* Handle sign up */ }
+                    modifier = Modifier.clickable { navController.navigate("registration") }
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
