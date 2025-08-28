@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
+
 }
 
 android {
@@ -40,7 +42,10 @@ android {
 }
 
 dependencies {
-    implementation("androidx.compose.material:material-icons-extended:<latest-ve")
+    // ✅ Fixed material icons
+    implementation("androidx.compose.material:material-icons-extended")
+
+    // Jetpack libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -51,6 +56,17 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.navigation.compose.android)
+
+    // ✅ Supabase dependencies
+    implementation("io.github.jan-tennert.supabase:postgrest-kt:2.4.0")
+    implementation("io.github.jan-tennert.supabase:gotrue-kt:2.4.0")
+    implementation("io.github.jan-tennert.supabase:storage-kt:2.4.0")
+    implementation("io.github.jan-tennert.supabase:realtime-kt:2.4.0")
+
+    // ✅ For JSON serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+
+    // Tests
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
