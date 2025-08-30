@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.foodcredit15.R
+import kotlinx.coroutines.*
+import com.example.foodcredit15.data.UserRepo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -137,10 +139,29 @@ fun RegistrationScreen(navController: NavController) {
         // Register Button
         Button(
             onClick = {
-                // 👇 Navigate to dashboard after register
-                navController.navigate("dashboard")
+                if (password == confirmPassword) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val success = UserRepo.registerUser(
+                            name = name,
+                            phone = phone,
+                            gender = gender,
+                            email = email,
+                            password = password
+                        )
+                        withContext(Dispatchers.Main) {
+                            if (success) {
+                                navController.navigate("dashboard")
+                            } else {
+                                // You can show an error here (e.g. Toast or Snackbar)
+                            }
+                        }
+                    }
+                } else {
+                    // You can show an error like "Passwords do not match"
+                }
             },
-            modifier = Modifier.fillMaxWidth(),
+
+                    modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
         ) {
             Text("Register", color = Color.White)
