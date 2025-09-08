@@ -11,28 +11,13 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-//dependencyResolutionManagement {
-//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-//    repositories {
-//        google()
-//        mavenCentral()
-//    }
-//}
-
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        // You can add more repositories if needed
-        // maven { url = uri("https://jitpack.io") }
     }
 }
 
-rootProject.name = "YourProjectName"
+rootProject.name = "My Application"
 include(":app")
-
-
-rootProject.name = "Food Credit 1.5"
-include(":app")
- 
