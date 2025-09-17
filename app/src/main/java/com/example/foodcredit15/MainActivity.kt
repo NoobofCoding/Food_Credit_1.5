@@ -12,7 +12,7 @@ import com.example.foodcredit15.ui.screens.AccountTypeScreen
 import com.example.foodcredit15.ui.screens.UserLoginScreen
 import com.example.foodcredit15.ui.screens.EmployeeLoginScreen
 import com.example.foodcredit15.ui.screens.SplashScreen
-import com.example.foodcredit15.ui.internals.DashboardScreen
+import com.example.foodcredit15.ui.screens.DashboardScreen
 import com.example.foodcredit15.ui.internals.AccountScreen
 import com.example.foodcredit15.ui.internals.Order
 import com.example.foodcredit15.ui.internals.OrderHistoryScreen
@@ -74,6 +74,7 @@ class MainActivity : ComponentActivity() {
                         composable("settings"){
                             SettingsScreen(navController)
                         }
+//                        composable("dashboard")
                     }
                 }
             }

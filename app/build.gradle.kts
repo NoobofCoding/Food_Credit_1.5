@@ -74,6 +74,10 @@ dependencies {
 
     implementation("io.ktor:ktor-client-okhttp:3.0.0")
     implementation("com.google.zxing:core:3.5.1")
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.play.services.analytics.impl)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -82,4 +86,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("androidx.compose.material3:material3:1.2.0")
+
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+
 }

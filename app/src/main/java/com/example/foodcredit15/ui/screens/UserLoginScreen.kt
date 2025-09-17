@@ -1,5 +1,6 @@
 package com.example.foodcredit15.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +23,8 @@ import com.example.foodcredit15.ui.viewmodels.LoginUiState
 import com.example.foodcredit15.ui.viewmodels.LoginViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.foodcredit15.ui.internals.QrCodeView
+//import kotlinx.coroutines.flow.internal.NoOpContinuation.context
+//import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 
 @Composable
@@ -138,12 +141,16 @@ fun UserLoginScreen(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = { viewModel.login(email, password) },
+                    onClick = {
+                        navController.navigate("dashboard") {
+                            popUpTo("userLogin") { inclusive = true }
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1EB980)),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Sign In", color = Color.White, modifier = Modifier.padding(vertical = 4.dp))
+                    Text("Continue", color = Color.White)
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -163,16 +170,19 @@ fun UserLoginScreen(
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(
                             onClick = {
-                                navController.navigate("dashboard") {
-                                    popUpTo("userLogin") { inclusive = true }
-                                }
+                                navController.navigate("dashboard")
                             },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1EB980)),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Text("Continue", color = Color.White)
+                            Text(
+                                "Sign In",
+                                color = Color.White,
+                                modifier = Modifier.padding(vertical = 4.dp)
+                            )
                         }
+
                     }
                     is LoginUiState.Error -> {
                         Text(
