@@ -49,14 +49,7 @@ fun UserLoginScreen(
                 .padding(top = 24.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(R.drawable.arrow),
-                contentDescription = "Back",
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable { navController.popBackStack() }
-            )
-            Spacer(modifier = Modifier.weight(1f))
+
         }
 
         Image(
