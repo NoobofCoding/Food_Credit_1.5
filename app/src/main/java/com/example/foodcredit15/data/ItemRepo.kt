@@ -1,54 +1,52 @@
 package com.example.foodcredit15.data
 
 import com.example.foodcredit15.network.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
 
-class ItemRepo {
-    private val api = RetrofitClient.instance.create(ApiService::class.java)
-
+class ItemRepo(
+    private val api: ApiService = RetrofitClient.instance.create(ApiService::class.java)
+) {
     fun createItem(item: ItemRequest, onResult: (ItemResponse?) -> Unit) {
-        api.createItem(item).enqueue(object : Callback<ItemResponse> {
-            override fun onResponse(call: Call<ItemResponse>, response: Response<ItemResponse>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.createItem(item)
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<ItemResponse>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun getItems(onResult: (List<ItemResponse>?) -> Unit) {
-        api.getItems().enqueue(object : Callback<List<ItemResponse>> {
-            override fun onResponse(call: Call<List<ItemResponse>>, response: Response<List<ItemResponse>>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.getItems()
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<List<ItemResponse>>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun updateItem(id: Int, item: ItemRequest, onResult: (Boolean) -> Unit) {
-        api.updateItem(id, item).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.updateItem(id, item)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 
     fun deleteItem(id: Int, onResult: (Boolean) -> Unit) {
-        api.deleteItem(id).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.deleteItem(id)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 }

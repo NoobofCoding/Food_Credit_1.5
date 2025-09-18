@@ -1,43 +1,41 @@
 package com.example.foodcredit15.data
 
 import com.example.foodcredit15.network.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
 
-class RedemptionRepo {
-    private val api = RetrofitClient.instance.create(ApiService::class.java)
-
+class RedemptionRepo(
+    private val api: ApiService = RetrofitClient.instance.create(ApiService::class.java)
+) {
     fun createRedemption(redemption: RedemptionRequest, onResult: (RedemptionResponse?) -> Unit) {
-        api.createRedemption(redemption).enqueue(object : Callback<RedemptionResponse> {
-            override fun onResponse(call: Call<RedemptionResponse>, response: Response<RedemptionResponse>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.createRedemption(redemption)
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<RedemptionResponse>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun getRedemptions(onResult: (List<RedemptionResponse>?) -> Unit) {
-        api.getRedemptions().enqueue(object : Callback<List<RedemptionResponse>> {
-            override fun onResponse(call: Call<List<RedemptionResponse>>, response: Response<List<RedemptionResponse>>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.getRedemptions()
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<List<RedemptionResponse>>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun deleteRedemption(id: Int, onResult: (Boolean) -> Unit) {
-        api.deleteRedemption(id).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.deleteRedemption(id)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 }

@@ -7,8 +7,7 @@ data class UserResponse(
     @SerializedName("user_id") val userId: Int,
     val name: String,
     val email: String,
-    @SerializedName("password_hash") val passwordHash: String,
-    @SerializedName("qr_code") val qrCode: String,
+    @SerializedName("qr_code") val qrCode: String?,
     val points: Int,
     @SerializedName("created_at") val createdAt: String
 )
@@ -18,7 +17,6 @@ data class EmployeeResponse(
     @SerializedName("employee_id") val employeeId: Int,
     val name: String,
     val email: String,
-    @SerializedName("password_hash") val passwordHash: String,
     @SerializedName("created_at") val createdAt: String
 )
 

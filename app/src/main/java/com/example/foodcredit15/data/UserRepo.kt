@@ -1,66 +1,63 @@
 package com.example.foodcredit15.data
 
 import com.example.foodcredit15.network.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
 
-class UserRepo {
-    private val api = RetrofitClient.instance.create(ApiService::class.java)
-
+class UserRepo(
+    private val api: ApiService = RetrofitClient.instance.create(ApiService::class.java)
+) {
     fun createUser(user: UserRequest, onResult: (UserResponse?) -> Unit) {
-        api.createUser(user).enqueue(object : Callback<UserResponse> {
-            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.createUser(user)
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun getUsers(onResult: (List<UserResponse>?) -> Unit) {
-        api.getUsers().enqueue(object : Callback<List<UserResponse>> {
-            override fun onResponse(call: Call<List<UserResponse>>, response: Response<List<UserResponse>>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.getUsers()
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<List<UserResponse>>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun updateUser(id: Int, user: UserRequest, onResult: (Boolean) -> Unit) {
-        api.updateUser(id, user).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.updateUser(id, user)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 
     fun deleteUser(id: Int, onResult: (Boolean) -> Unit) {
-        api.deleteUser(id).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.deleteUser(id)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 
     fun loginUser(email: String, password: String, onResult: (UserResponse?) -> Unit) {
-        api.loginUser(LoginRequest(email, password)).enqueue(object : Callback<UserResponse> {
-            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                if (response.isSuccessful) onResult(response.body()) else onResult(null)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.loginUser(LoginRequest(email, password))
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
-
 }

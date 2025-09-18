@@ -2,55 +2,58 @@ package com.example.foodcredit15.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodcredit15.data.UserRepo
+import com.example.foodcredit15.network.ApiService
 import com.example.foodcredit15.network.UserRequest
+import com.example.foodcredit15.network.LoginRequest
 import com.example.foodcredit15.network.UserResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class UserUiState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val users: List<UserResponse> = emptyList()
-)
+sealed class UserState {
+    object Idle : UserState()
+    object Loading : UserState()
+    data class Success(val user: UserResponse) : UserState()
+    data class Error(val message: String) : UserState()
+}
 
-class UserViewModel : ViewModel() {
-    private val repo = UserRepo()
+class UserViewModel(private val api: ApiService) : ViewModel() {
 
-    private val _ui = MutableStateFlow(UserUiState())
-    val ui: StateFlow<UserUiState> = _ui
+    private val _userState = MutableStateFlow<UserState>(UserState.Idle)
+    val userState: StateFlow<UserState> = _userState
 
-    fun loadUsers() {
-        _ui.value = UserUiState(loading = true)
+    fun registerUser(name: String, email: String, password: String, qrCode: String?) {
         viewModelScope.launch {
-            repo.getUsers { list ->
-                _ui.value = if (list != null) {
-                    UserUiState(users = list)
-                } else {
-                    UserUiState(error = "Failed to load users")
-                }
+            _userState.value = UserState.Loading
+            try {
+                val response = api.createUser(UserRequest(name, email, password, qrCode))
+                _userState.value = UserState.Success(response)
+            } catch (e: Exception) {
+                _userState.value = UserState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }
 
-    fun createUser(user: UserRequest) {
-        _ui.value = UserUiState(loading = true)
+    fun loginUser(email: String, password: String) {
         viewModelScope.launch {
-            repo.createUser(user) { response ->
-                if (response != null) {
-                    loadUsers() // refresh list
-                } else {
-                    _ui.value = UserUiState(error = "User creation failed")
-                }
+            _userState.value = UserState.Loading
+            try {
+                val response = api.loginUser(LoginRequest(email, password))
+                _userState.value = UserState.Success(response)
+            } catch (e: Exception) {
+                _userState.value = UserState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }
 
-    fun deleteUser(id: Int) {
+    fun getUser(id: Int) {
         viewModelScope.launch {
-            repo.deleteUser(id) { success ->
-                if (success) loadUsers()
+            _userState.value = UserState.Loading
+            try {
+                val response = api.getUser(id)
+                _userState.value = UserState.Success(response)
+            } catch (e: Exception) {
+                _userState.value = UserState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }

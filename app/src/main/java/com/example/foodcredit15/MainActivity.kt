@@ -8,17 +8,17 @@ import androidx.compose.material3.Surface
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.foodcredit15.ui.screens.AccountTypeScreen
+import com.example.foodcredit15.network.RetrofitClient
 import com.example.foodcredit15.ui.screens.UserLoginScreen
-import com.example.foodcredit15.ui.screens.EmployeeLoginScreen
 import com.example.foodcredit15.ui.screens.SplashScreen
-import com.example.foodcredit15.ui.internals.DashboardScreen
 import com.example.foodcredit15.ui.internals.AccountScreen
 import com.example.foodcredit15.ui.internals.Order
 import com.example.foodcredit15.ui.internals.OrderHistoryScreen
 import com.example.foodcredit15.ui.internals.OrderScreen
 import com.example.foodcredit15.ui.screens.RegistrationScreen
 import com.example.foodcredit15.ui.internals.SettingsScreen
+import com.example.foodcredit15.network.ApiService
+import com.example.foodcredit15.ui.internals.DashboardScreen
 
 
 class MainActivity : ComponentActivity() {
@@ -28,16 +28,17 @@ class MainActivity : ComponentActivity() {
             MaterialTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
+                    val api = RetrofitClient.instance.create(ApiService::class.java)
                     NavHost(
                         navController = navController,
-                        startDestination = "splash"
+                        startDestination = "dashboard"
                     )
                     {
                         composable("splash") {
                             SplashScreen(navController)
                         }
                         composable("userLogin") {
-                            UserLoginScreen(navController)
+                            UserLoginScreen(navController,api)
                         }
                         composable("dashboard") {
                             DashboardScreen(navController)
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable ("registration"){
-                            RegistrationScreen(navController)
+                            RegistrationScreen(navController,api)
                         }
                         composable("settings"){
                             SettingsScreen(navController)

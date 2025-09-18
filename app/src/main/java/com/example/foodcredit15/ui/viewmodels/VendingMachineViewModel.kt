@@ -2,48 +2,45 @@ package com.example.foodcredit15.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodcredit15.data.VendingMachineRepo
+import com.example.foodcredit15.network.ApiService
 import com.example.foodcredit15.network.VendingMachineRequest
 import com.example.foodcredit15.network.VendingMachineResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class VendingMachineUiState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val machines: List<VendingMachineResponse> = emptyList()
-)
+sealed class VendingMachineState {
+    object Idle : VendingMachineState()
+    object Loading : VendingMachineState()
+    data class Success(val machines: List<VendingMachineResponse>) : VendingMachineState()
+    data class Error(val message: String) : VendingMachineState()
+}
 
-class VendingMachineViewModel : ViewModel() {
-    private val repo = VendingMachineRepo()
-    private val _ui = MutableStateFlow(VendingMachineUiState())
-    val ui: StateFlow<VendingMachineUiState> = _ui
+class VendingMachineViewModel(private val api: ApiService) : ViewModel() {
 
-    fun loadMachines() {
-        _ui.value = VendingMachineUiState(loading = true)
+    private val _state = MutableStateFlow<VendingMachineState>(VendingMachineState.Idle)
+    val state: StateFlow<VendingMachineState> = _state
+
+    fun getMachines() {
         viewModelScope.launch {
-            repo.getMachines { list ->
-                _ui.value = if (list != null) VendingMachineUiState(machines = list)
-                else VendingMachineUiState(error = "Failed to load machines")
+            _state.value = VendingMachineState.Loading
+            try {
+                val response = api.getMachines()
+                _state.value = VendingMachineState.Success(response)
+            } catch (e: Exception) {
+                _state.value = VendingMachineState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }
 
-    fun createMachine(machine: VendingMachineRequest) {
-        _ui.value = VendingMachineUiState(loading = true)
+    fun addMachine(location: String, status: String) {
         viewModelScope.launch {
-            repo.createMachine(machine) { response ->
-                if (response != null) loadMachines()
-                else _ui.value = VendingMachineUiState(error = "Failed to create machine")
-            }
-        }
-    }
-
-    fun deleteMachine(id: Int) {
-        viewModelScope.launch {
-            repo.deleteMachine(id) { success ->
-                if (success) loadMachines()
+            _state.value = VendingMachineState.Loading
+            try {
+                api.createMachine(VendingMachineRequest(location, status))
+                getMachines()
+            } catch (e: Exception) {
+                _state.value = VendingMachineState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }

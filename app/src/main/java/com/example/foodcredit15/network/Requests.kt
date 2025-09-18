@@ -7,7 +7,7 @@ data class UserRequest(
     val name: String,
     val email: String,
     @SerializedName("password_hash") val passwordHash: String,
-    @SerializedName("qr_code") val qrCode: String
+    @SerializedName("qr_code") val qrCode: String? =null
 )
 
 // ---------------- Employees ----------------
@@ -65,7 +65,9 @@ data class RefillRequest(
     @SerializedName("item_id") val itemId: Int,
     val quantity: Int
 )
-//---------------- Login Request -----------------
+
+// ---------------- Login ----------------
+
 data class LoginRequest(
     val email: String,
     val password: String

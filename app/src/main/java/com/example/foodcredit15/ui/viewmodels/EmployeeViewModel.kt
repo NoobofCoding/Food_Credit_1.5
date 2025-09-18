@@ -2,40 +2,49 @@ package com.example.foodcredit15.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodcredit15.data.EmployeeRepo
+import com.example.foodcredit15.network.ApiService
 import com.example.foodcredit15.network.EmployeeRequest
 import com.example.foodcredit15.network.EmployeeResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class EmployeeUiState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val employees: List<EmployeeResponse> = emptyList()
-)
+sealed class EmployeeState {
+    object Idle : EmployeeState()
+    object Loading : EmployeeState()
+    data class Success(val employee: EmployeeResponse) : EmployeeState()
+    data class Error(val message: String) : EmployeeState()
+}
 
-class EmployeeViewModel : ViewModel() {
-    private val repo = EmployeeRepo()
-    private val _ui = MutableStateFlow(EmployeeUiState())
-    val ui: StateFlow<EmployeeUiState> = _ui
+class EmployeeViewModel(private val api: ApiService) : ViewModel() {
 
-    fun loadEmployees() {
-        _ui.value = EmployeeUiState(loading = true)
+    private val _state = MutableStateFlow<EmployeeState>(EmployeeState.Idle)
+    val state: StateFlow<EmployeeState> = _state
+
+    fun createEmployee(name: String, email: String, password: String) {
         viewModelScope.launch {
-            repo.getEmployees { list ->
-                _ui.value = if (list != null) EmployeeUiState(employees = list)
-                else EmployeeUiState(error = "Failed to load employees")
+            _state.value = EmployeeState.Loading
+            try {
+                val response = api.createEmployee(EmployeeRequest(name, email, password))
+                _state.value = EmployeeState.Success(response)
+            } catch (e: Exception) {
+                _state.value = EmployeeState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }
 
-    fun createEmployee(emp: EmployeeRequest) {
-        _ui.value = EmployeeUiState(loading = true)
+    fun getEmployees() {
         viewModelScope.launch {
-            repo.createEmployee(emp) { response ->
-                if (response != null) loadEmployees()
-                else _ui.value = EmployeeUiState(error = "Employee creation failed")
+            _state.value = EmployeeState.Loading
+            try {
+                val list = api.getEmployees()
+                if (list.isNotEmpty()) {
+                    _state.value = EmployeeState.Success(list.first()) // adapt as needed
+                } else {
+                    _state.value = EmployeeState.Error("No employees found")
+                }
+            } catch (e: Exception) {
+                _state.value = EmployeeState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }

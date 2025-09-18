@@ -1,43 +1,41 @@
 package com.example.foodcredit15.data
 
 import com.example.foodcredit15.network.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
 
-class TrashLogRepo {
-    private val api = RetrofitClient.instance.create(ApiService::class.java)
-
+class TrashLogRepo(
+    private val api: ApiService = RetrofitClient.instance.create(ApiService::class.java)
+) {
     fun createTrashLog(log: TrashLogRequest, onResult: (TrashLogResponse?) -> Unit) {
-        api.createTrashLog(log).enqueue(object : Callback<TrashLogResponse> {
-            override fun onResponse(call: Call<TrashLogResponse>, response: Response<TrashLogResponse>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.createTrashLog(log)
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<TrashLogResponse>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun getTrashLogs(onResult: (List<TrashLogResponse>?) -> Unit) {
-        api.getTrashLogs().enqueue(object : Callback<List<TrashLogResponse>> {
-            override fun onResponse(call: Call<List<TrashLogResponse>>, response: Response<List<TrashLogResponse>>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.getTrashLogs()
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<List<TrashLogResponse>>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun deleteTrashLog(id: Int, onResult: (Boolean) -> Unit) {
-        api.deleteTrashLog(id).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.deleteTrashLog(id)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 }

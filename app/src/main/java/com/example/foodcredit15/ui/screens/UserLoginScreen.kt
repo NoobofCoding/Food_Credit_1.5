@@ -18,19 +18,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.foodcredit15.R
-import com.example.foodcredit15.ui.viewmodels.LoginUiState
+import com.example.foodcredit15.ui.viewmodels.LoginViewModelFactory
 import com.example.foodcredit15.ui.viewmodels.LoginViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.foodcredit15.network.ApiService
 import com.example.foodcredit15.ui.internals.QrCodeView
-
+import com.example.foodcredit15.ui.viewmodels.LoginUiState
 
 @Composable
 fun UserLoginScreen(
     navController: NavController,
-    viewModel: LoginViewModel = viewModel()
+    api: ApiService
 ) {
+    val viewModel: LoginViewModel = viewModel(
+        factory = LoginViewModelFactory(api)
+    )
     val uiState by viewModel.uiState.collectAsState()
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMe by remember { mutableStateOf(false) }
@@ -155,41 +158,23 @@ fun UserLoginScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                when (val s = uiState) {
-                    is LoginUiState.Loading -> {
-                        CircularProgressIndicator()
-                    }
+                when (val state = uiState) {
+                    is LoginUiState.Loading -> CircularProgressIndicator()
                     is LoginUiState.Success -> {
-                        val user = s.user
-                        Text("Welcome ${user.name}!", color = Color.Black, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        // QR Code view - create QrCodeView composable (see next step)
+                        val user = state.user
+                        Text("Welcome ${user.name}!", fontWeight = FontWeight.Bold)
                         QrCodeView(data = user.qrCode)
 
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Button(
-                            onClick = {
-                                navController.navigate("dashboard") {
-                                    popUpTo("userLogin") { inclusive = true }
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1EB980)),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text("Continue", color = Color.White)
+                        Button(onClick = {
+                            navController.navigate("dashboard") {
+                                popUpTo("userLogin") { inclusive = true }
+                            }
+                        }) {
+                            Text("Continue")
                         }
                     }
-                    is LoginUiState.Error -> {
-                        Text(
-                            "Error: ${(s).message}",
-                            color = Color.Red
-                        )
-                    }
-                    else -> {
-                        // Idle - do nothing
-                    }
+                    is LoginUiState.Error -> Text("Error: ${state.message}", color = Color.Red)
+                    else -> {}
                 }
 
                 Text(

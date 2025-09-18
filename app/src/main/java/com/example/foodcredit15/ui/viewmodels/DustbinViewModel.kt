@@ -2,40 +2,45 @@ package com.example.foodcredit15.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.foodcredit15.data.DustbinRepo
+import com.example.foodcredit15.network.ApiService
 import com.example.foodcredit15.network.DustbinRequest
 import com.example.foodcredit15.network.DustbinResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class DustbinUiState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val dustbins: List<DustbinResponse> = emptyList()
-)
+sealed class DustbinState {
+    object Idle : DustbinState()
+    object Loading : DustbinState()
+    data class Success(val dustbins: List<DustbinResponse>) : DustbinState()
+    data class Error(val message: String) : DustbinState()
+}
 
-class DustbinViewModel : ViewModel() {
-    private val repo = DustbinRepo()
-    private val _ui = MutableStateFlow(DustbinUiState())
-    val ui: StateFlow<DustbinUiState> = _ui
+class DustbinViewModel(private val api: ApiService) : ViewModel() {
 
-    fun loadDustbins() {
-        _ui.value = DustbinUiState(loading = true)
+    private val _state = MutableStateFlow<DustbinState>(DustbinState.Idle)
+    val state: StateFlow<DustbinState> = _state
+
+    fun getDustbins() {
         viewModelScope.launch {
-            repo.getDustbins { list ->
-                _ui.value = if (list != null) DustbinUiState(dustbins = list)
-                else DustbinUiState(error = "Failed to load dustbins")
+            _state.value = DustbinState.Loading
+            try {
+                val response = api.getDustbins()
+                _state.value = DustbinState.Success(response)
+            } catch (e: Exception) {
+                _state.value = DustbinState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }
 
-    fun createDustbin(bin: DustbinRequest) {
-        _ui.value = DustbinUiState(loading = true)
+    fun createDustbin(location: String, capacityKg: Float, status: String) {
         viewModelScope.launch {
-            repo.createDustbin(bin) { response ->
-                if (response != null) loadDustbins()
-                else _ui.value = DustbinUiState(error = "Dustbin creation failed")
+            _state.value = DustbinState.Loading
+            try {
+                val response = api.createDustbin(DustbinRequest(location, capacityKg.toInt(), status))
+                getDustbins() // refresh list
+            } catch (e: Exception) {
+                _state.value = DustbinState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
     }

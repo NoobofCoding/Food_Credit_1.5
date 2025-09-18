@@ -1,54 +1,52 @@
 package com.example.foodcredit15.data
 
 import com.example.foodcredit15.network.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.*
 
-class RefillRepo {
-    private val api = RetrofitClient.instance.create(ApiService::class.java)
-
+class RefillRepo(
+    private val api: ApiService = RetrofitClient.instance.create(ApiService::class.java)
+) {
     fun createRefill(refill: RefillRequest, onResult: (RefillResponse?) -> Unit) {
-        api.createRefill(refill).enqueue(object : Callback<RefillResponse> {
-            override fun onResponse(call: Call<RefillResponse>, response: Response<RefillResponse>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.createRefill(refill)
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<RefillResponse>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun getRefills(onResult: (List<RefillResponse>?) -> Unit) {
-        api.getRefills().enqueue(object : Callback<List<RefillResponse>> {
-            override fun onResponse(call: Call<List<RefillResponse>>, response: Response<List<RefillResponse>>) {
-                onResult(response.body())
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = api.getRefills()
+                withContext(Dispatchers.Main) { onResult(response) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(null) }
             }
-            override fun onFailure(call: Call<List<RefillResponse>>, t: Throwable) {
-                onResult(null)
-            }
-        })
+        }
     }
 
     fun updateRefill(id: Int, refill: RefillRequest, onResult: (Boolean) -> Unit) {
-        api.updateRefill(id, refill).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.updateRefill(id, refill)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 
     fun deleteRefill(id: Int, onResult: (Boolean) -> Unit) {
-        api.deleteRefill(id).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                onResult(response.isSuccessful)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                api.deleteRefill(id)
+                withContext(Dispatchers.Main) { onResult(true) }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) { onResult(false) }
             }
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                onResult(false)
-            }
-        })
+        }
     }
 }
